@@ -5,16 +5,32 @@ FRONTEND_URL=http://localhost:0000
 const productRoutes = require('./routes/productRoutes');
 app.use('/products', productRoutes);
 
-const paymentRoutes = require('./routes/paymentRoutes');
-app.use('/payments', paymentRoutes);
-const paymentRoutes = require('./routes/paymentRoutes');
-app.use('/payments', paymentRoutes);
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
 const morgan = require('morgan');
-app.use(morgan('dev'));
+const productRoutes = require('./routes/productRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 const errorHandler = require('./middlewares/errorHandler');
-app.use(errorHandler);
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+require('dotenv').config();
+
+const app = express();
+const PORT = process.env.PORT || 0000/0;
+
+app.use(cors());
+app.use(express.json());
+app.use(morgan('dev'));
+
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
+
+app.use('/products', productRoutes);
+app.use('/payments', paymentRoutes);
+
+app.use(errorHandler);
 
 const swaggerOptions = {
   swaggerDefinition: {
@@ -31,3 +47,6 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
