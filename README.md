@@ -96,5 +96,6 @@ npm test
 Contribución
 Si deseas contribuir, por favor realiza un fork del repositorio, crea una nueva rama, realiza tus cambios y envía un Pull Request.
 
+
 Licencia
 Este proyecto está bajo la Licencia MIT.
