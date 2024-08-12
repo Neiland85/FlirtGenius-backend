@@ -1,8 +1,8 @@
-const Product = require('../models/product');
+const productService = require('../services/productService');
 
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await productService.getAllProducts();
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: 'Error retrieving products' });
@@ -11,7 +11,7 @@ exports.getProducts = async (req, res) => {
 
 exports.getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await productService.getProductById(req.params.id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
     res.json(product);
   } catch (error) {
@@ -21,15 +21,11 @@ exports.getProductById = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
   const { name, description, price, image, stock } = req.body;
-
   if (!name || !description || !price || !image || !stock) {
     return res.status(400).json({ message: 'All fields are required' });
   }
-
-  const product = new Product({ name, description, price, image, stock });
-
   try {
-    const savedProduct = await product.save();
+    const savedProduct = await productService.createProduct(req.body);
     res.status(201).json(savedProduct);
   } catch (error) {
     res.status(500).json({ message: 'Error saving product' });
@@ -38,7 +34,7 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedProduct = await productService.updateProduct(req.params.id, req.body);
     if (!updatedProduct) return res.status(404).json({ message: 'Product not found' });
     res.json(updatedProduct);
   } catch (error) {
@@ -48,10 +44,11 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   try {
-    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+    const deletedProduct = await productService.deleteProduct(req.params.id);
     if (!deletedProduct) return res.status(404).json({ message: 'Product not found' });
     res.json({ message: 'Product deleted' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting product' });
   }
 };
+
