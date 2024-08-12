@@ -2,8 +2,9 @@
   "name": "flirtgenius-backend",
   "version": "1.0.0",
   "description": "API RESTful construida con Node.js y Express para gestionar productos y pagos en una tienda en línea. Utiliza MongoDB y ofrece gestión de errores, trazabilidad y observabilidad, integrándose con el frontend para proporcionar datos y transacciones.",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -24,3 +25,4 @@
     "nodemon": "^3.1.4"
   }
 }
+
