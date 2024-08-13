@@ -1,6 +1,9 @@
 const express = require('express');
+const bodyParser = require('body-parser'); // Necesario para manejar solicitudes POST
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(bodyParser.json());
 
 const products = [
     { id: 1, name: "Product 1", price: 10.00 },
@@ -29,6 +32,10 @@ app.post('/products', (req, res) => {
     };
     products.push(newProduct);
     res.status(201).json(newProduct);
+});
+
+app.get('/api/hello', (req, res) => {
+    res.send('Hello KAZEM team!!');
 });
 
 app.listen(port, () => {
