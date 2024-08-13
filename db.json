@@ -1,11 +1,27 @@
 {
-  "products": [
-    { "id": 1, "name": "Product A", "price": 100 },
-    { "id": 2, "name": "Product B", "price": 200 }
-  ],
   "users": [
-    { "id": 1, "name": "John Doe" },
-    { "id": 2, "name": "Jane Doe" }
+    {
+      "id": 1,
+      "name": "Dino Cabrales",
+      "email": "quesosdelvierzo@example.com"
+    },
+    {
+      "id": 2,
+      "name": "Ravino Diego",
+      "email": "ravinodiego@example.com"
+    }
+  ],
+  "posts": [
+    {
+      "id": 1,
+      "title": "Hello KAZEM team!!",
+      "content": "Los principios de la lógica son principios de los cuales la mente humana no puede prescindir; son los principios de la mente que la mente misma no puede conocer por sí misma. Kurt Gödel"
+    },
+    {
+      "id": 2,
+      "title": "Another Post",
+      "content": "Quiero ser parte del equipo KAZEM."
+    }
   ]
 }
-{}
+
