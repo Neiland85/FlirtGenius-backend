@@ -1,21 +1,21 @@
 {
   "name": "flirtgenius-backend",
   "version": "1.0.0",
-  "description": "Backend para la aplicación FlirtGenius",
+  "description": "Backend for FlirtGenius",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "json-server": "json-server --watch db.json --port 3001"
   },
   "dependencies": {
-    "express": "^4.18.2",
+    "express": "^4.18.1",
     "mongoose": "^8.5.2",
-    "mongodb": "^6.8.0",
+    "mongodb": "^6.8.0"
   },
   "devDependencies": {
     "json-server": "^0.17.0"
   },
-  "author": "Tu Nombre",
+  "author": "",
   "license": "ISC"
 }
 

@@ -1,0 +1,11 @@
+{
+  "products": [
+    { "id": 1, "name": "Product A", "price": 100 },
+    { "id": 2, "name": "Product B", "price": 200 }
+  ],
+  "users": [
+    { "id": 1, "name": "John Doe" },
+    { "id": 2, "name": "Jane Doe" }
+  ]
+}
+{}
