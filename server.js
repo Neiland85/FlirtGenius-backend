@@ -8,7 +8,7 @@ const morgan = require('morgan');
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 3001; // Cambiamos el puerto a 3001
+const port = process.env.PORT || 3001;
 
 const logger = winston.createLogger({
     level: 'info',
@@ -152,7 +152,7 @@ app.post('/api/checkout', async (req, res) => {
                     product_data: {
                         name: product.name,
                     },
-                    unit_amount: product.price * 100, // Convertir a centavos
+                    unit_amount: product.price * 100,
                 },
                 quantity: product.quantity,
             })),
