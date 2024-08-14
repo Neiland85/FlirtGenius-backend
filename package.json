@@ -9,8 +9,10 @@
   },
   "dependencies": {
     "express": "^4.18.1",
+    "express-prometheus-middleware": "^1.2.0",
     "mongodb": "^6.8.0",
     "mongoose": "^8.5.2",
+    "stripe": "^16.7.0",
     "winston": "^3.14.1"
   },
   "devDependencies": {
