@@ -2,14 +2,14 @@ const { body, validationResult } = require('express-validator');
 const productService = require('../services/productService');
 
 exports.getProducts = async (req, res) => {
+    const { page = 1, limit = 10 } = req.query; // Valores por defecto si no se proporcionan
     try {
-        const products = await productService.getAllProducts();
+        const products = await productService.getProductsPaginated(page, limit);
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving products' });
     }
 };
-
 exports.getProductById = async (req, res) => {
     try {
         const product = await productService.getProductById(req.params.id);

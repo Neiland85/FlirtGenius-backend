@@ -45,14 +45,20 @@ app.use(prometheusMiddleware({
 
 app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
 
-// Middleware para manejo de errores
+const productRoutes = require('./routes/productRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+
+app.use('/products', productRoutes);
+app.use('/checkout', paymentRoutes);
+
 const errorHandler = require('./middleware/errorHandler');
 app.use(errorHandler);
 
-// Endpoints y otras configuraciones...
-// (Incluye aquí tus rutas de productos y pagos)
+module.exports = app;
 
-app.listen(port, () => {
-    logger.info(`Server is running on http://localhost:${port}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(port, () => {
+        logger.info(`Server is running on http://localhost:${port}`);
+    });
+}
 

@@ -1,5 +1,18 @@
 const Product = require('../models/product');
 
+const getProductsPaginated = async (page, limit) => {
+    const skip = (page - 1) * limit;
+    const products = await Product.find().skip(skip).limit(limit);
+    const totalItems = await Product.countDocuments();
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return {
+        products,
+        totalItems,
+        totalPages,
+        currentPage: page,
+    };
+};
 const getAllProducts = async () => {
   return await Product.find();
 };
@@ -22,10 +35,9 @@ const deleteProduct = async (id) => {
 };
 
 module.exports = {
-  getAllProducts,
-  getProductById,
-  createProduct,
-  updateProduct,
-  deleteProduct,
+    getProductsPaginated,
+    getProductById,
+    createProduct,
+    updateProduct,
+    deleteProduct,
 };
-
