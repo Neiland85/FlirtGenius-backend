@@ -130,6 +130,4 @@ dist
 .pnp.*
 src/.DS_Store
 
-# Ignore the FlirtGenius-backend directory
-FlirtGenius-backend/
 
