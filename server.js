@@ -1,10 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const winston = require('winston');
-const mongoose = require('mongoose');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const prometheusMiddleware = require('express-prometheus-middleware');
-const morgan = require('morgan');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 
 const app = express();
@@ -22,91 +19,82 @@ const logger = winston.createLogger({
     ]
 });
 
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => logger.info('MongoDB connected'))
-    .catch(err => {
+const uri = mongodb+srv://bookingnadarecords:LTltqZFVhxeCte3b@kazemcluster1-shard.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+;
+
+const client = new MongoClient(uri, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
+});
+
+async function run() {
+    try {
+        await client.connect();
+        await client.db("admin").command({ ping: 1 });
+        logger.info("Pinged your deployment. You successfully connected to MongoDB!");
+
+        const collection = client.db("test").collection("demo");
+
+        app.post('/demo', async (req, res) => {
+            try {
+                const result = await collection.insertOne(req.body);
+                res.status(201).json(result);
+            } catch (err) {
+                logger.error('POST /demo - Error inserting document', err);
+                res.status(500).json({ message: 'Server error' });
+            }
+        });
+
+        app.get('/demo', async (req, res) => {
+            try {
+                const documents = await collection.find({}).toArray();
+                res.json(documents);
+            } catch (err) {
+                logger.error('GET /demo - Error fetching documents', err);
+                res.status(500).json({ message: 'Server error' });
+            }
+        });
+
+        app.put('/demo/:id', async (req, res) => {
+            try {
+                const result = await collection.updateOne({ _id: new ObjectId(req.params.id) }, { $set: req.body });
+                if (result.matchedCount > 0) {
+                    res.json({ message: 'Document updated' });
+                } else {
+                    res.status(404).json({ message: 'Document not found' });
+                }
+            } catch (err) {
+                logger.error('PUT /demo/:id - Error updating document', err);
+                res.status(500).json({ message: 'Server error' });
+            }
+        });
+
+        app.delete('/demo/:id', async (req, res) => {
+            try {
+                const result = await collection.deleteOne({ _id: new ObjectId(req.params.id) });
+                if (result.deletedCount > 0) {
+                    res.json({ message: 'Document deleted' });
+                } else {
+                    res.status(404).json({ message: 'Document not found' });
+                }
+            } catch (err) {
+                logger.error('DELETE /demo/:id - Error deleting document', err);
+                res.status(500).json({ message: 'Server error' });
+            }
+        });
+
+    } catch (err) {
         logger.error('MongoDB connection error', err.message);
         process.exit(1);
-    });
+    }
+}
+
+run().catch(console.dir);
 
 app.use(bodyParser.json());
-
-app.use(prometheusMiddleware({
-    metricsPath: '/metrics',
-    collectDefaultMetrics: true,
-    requestDurationBuckets: [0.1, 0.5, 1, 1.5],
-    metricsApp: app,
-}));
-
-app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
-
-const productSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    description: { type: String, required: true },
-    price: { type: Number, required: true },
-    image: String,
-    stock: { type: Number, required: true, default: 0 }
-});
-
-const Product = mongoose.model('Product', productSchema);
-
-const userSchema = new mongoose.Schema({
-    username: { type: String, required: true },
-    email: { type: String, required: true },
-    password: { type: String, required: true }
-});
-
-const User = mongoose.model('User', userSchema);
-
-const postSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    content: { type: String, required: true },
-    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
-});
-
-const Post = mongoose.model('Post', postSchema);
-
-app.get('/users', async (req, res) => {
-    try {
-        const users = await User.find();
-        res.json(users);
-    } catch (err) {
-        logger.error('GET /users - Error fetching users', err);
-        res.status(500).json({ message: 'Server error' });
-    }
-});
-
-app.post('/users', async (req, res) => {
-    try {
-        const newUser = new User(req.body);
-        await newUser.save();
-        res.status(201).json(newUser);
-    } catch (err) {
-        logger.error('POST /users - Error creating user', err);
-        res.status(500).json({ message: 'Server error' });
-    }
-});
-
-app.get('/posts', async (req, res) => {
-    try {
-        const posts = await Post.find().populate('author');
-        res.json(posts);
-    } catch (err) {
-        logger.error('GET /posts - Error fetching posts', err);
-        res.status(500).json({ message: 'Server error' });
-    }
-});
-
-app.post('/posts', async (req, res) => {
-    try {
-        const newPost = new Post(req.body);
-        await newPost.save();
-        res.status(201).json(newPost);
-    } catch (err) {
-        logger.error('POST /posts - Error creating post', err);
-        res.status(500).json({ message: 'Server error' });
-    }
-});
 
 app.get('/api/hello', (req, res) => {
     logger.info('GET /api/hello - Sending hello message');
