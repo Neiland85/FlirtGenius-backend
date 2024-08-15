@@ -19,8 +19,7 @@ const logger = winston.createLogger({
     ]
 });
 
-const uri = mongodb+srv://bookingnadarecords:LTltqZFVhxeCte3b@kazemcluster1-shard.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
-;
+const uri = "mongodb+srv://bookingnadarecords:LTltqZFVhxeCte3b@kazemcluster1-shard.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 const client = new MongoClient(uri, {
     serverApi: {
