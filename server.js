@@ -22,13 +22,13 @@ const logger = winston.createLogger({
     ]
 });
 
-mongoose.connect(process.env.DB_URI, {
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
 .then(() => logger.info('MongoDB connected'))
 .catch(err => {
-    logger.error('MongoDB connection error', err);
+    logger.error('MongoDB connection error', err.message);
     process.exit(1);
 });
 
@@ -39,26 +39,84 @@ app.use(prometheusMiddleware({
     collectDefaultMetrics: true,
     requestDurationBuckets: [0.1, 0.5, 1, 1.5],
     metricsApp: app,
-    additionalLabels: ['method', 'status'],
-    normalizeStatus: status => status < 400 ? 'success' : 'error',
 }));
 
 app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
 
-const productRoutes = require('./routes/productRoutes');
-const paymentRoutes = require('./routes/paymentRoutes');
+const productSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    price: { type: Number, required: true },
+    image: String,
+    stock: { type: Number, required: true, default: 0 }
+});
 
-app.use('/products', productRoutes);
-app.use('/checkout', paymentRoutes);
+const Product = mongoose.model('Product', productSchema);
 
-const errorHandler = require('./middleware/errorHandler');
-app.use(errorHandler);
+const userSchema = new mongoose.Schema({
+    username: { type: String, required: true },
+    email: { type: String, required: true },
+    password: { type: String, required: true }
+});
 
-module.exports = app;
+const User = mongoose.model('User', userSchema);
 
-if (process.env.NODE_ENV !== 'test') {
-    app.listen(port, () => {
-        logger.info(`Server is running on http://localhost:${port}`);
-    });
-}
+const postSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+});
+
+const Post = mongoose.model('Post', postSchema);
+
+app.get('/users', async (req, res) => {
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (err) {
+        logger.error('GET /users - Error fetching users', err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.post('/users', async (req, res) => {
+    try {
+        const newUser = new User(req.body);
+        await newUser.save();
+        res.status(201).json(newUser);
+    } catch (err) {
+        logger.error('POST /users - Error creating user', err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.get('/posts', async (req, res) => {
+    try {
+        const posts = await Post.find().populate('author');
+        res.json(posts);
+    } catch (err) {
+        logger.error('GET /posts - Error fetching posts', err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.post('/posts', async (req, res) => {
+    try {
+        const newPost = new Post(req.body);
+        await newPost.save();
+        res.status(201).json(newPost);
+    } catch (err) {
+        logger.error('POST /posts - Error creating post', err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.get('/api/hello', (req, res) => {
+    logger.info('GET /api/hello - Sending hello message');
+    res.send('Hello KAZEM team!!');
+});
+
+app.listen(port, () => {
+    logger.info(`Server is running on http://localhost:${port}`);
+});
 
