@@ -129,8 +129,7 @@ dist
 .yarn/install-state.gz
 .pnp.*
 src/.DS_Store
-src/.DS_Store
-/src
-src/.DS_Store
-.env.production
-src/.DS_Store
+
+# Ignore the FlirtGenius-backend directory
+FlirtGenius-backend/
+
