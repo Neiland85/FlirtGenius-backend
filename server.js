@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const winston = require('winston');
 const mongoose = require('mongoose');
-const stripe = require('stripe')(process.env.STRIPE_KEY);
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const prometheusMiddleware = require('express-prometheus-middleware');
 const morgan = require('morgan');
 require('dotenv').config();
@@ -119,4 +119,3 @@ app.get('/api/hello', (req, res) => {
 app.listen(port, () => {
     logger.info(`Server is running on http://localhost:${port}`);
 });
-
