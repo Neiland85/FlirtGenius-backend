@@ -15,7 +15,7 @@ const logger = winston.createLogger({
     ),
     transports: [
         new winston.transports.Console(),
-        new winston.transports.File({ filename: 'server.log' })
+        new winston.transports.File({ filename: 'logs/server.log' })
     ]
 });
 
@@ -37,6 +37,7 @@ async function run() {
 
         const collection = client.db("test").collection("demo");
 
+        // Rutas API
         app.post('/demo', async (req, res) => {
             try {
                 const result = await collection.insertOne(req.body);
@@ -103,4 +104,3 @@ app.get('/api/hello', (req, res) => {
 app.listen(port, () => {
     logger.info(`Server is running on http://localhost:${port}`);
 });
-
