@@ -19,7 +19,9 @@ const logger = winston.createLogger({
     ]
 });
 
-const uri = "mongodb+srv://bookingnadarecords:LTltqZFVhxeCte3b@kazemcluster1-shard.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_URI; MONGODB_URI=mongodb+srv://bookingnadarecords:LTltqZFVhxeCte3b@kazemcluster1-shard.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+PORT=3001;
+
 
 const client = new MongoClient(uri, {
     serverApi: {
@@ -37,7 +39,6 @@ async function run() {
 
         const collection = client.db("test").collection("demo");
 
-        // Rutas API
         app.post('/demo', async (req, res) => {
             try {
                 const result = await collection.insertOne(req.body);
@@ -104,3 +105,4 @@ app.get('/api/hello', (req, res) => {
 app.listen(port, () => {
     logger.info(`Server is running on http://localhost:${port}`);
 });
+
