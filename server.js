@@ -19,9 +19,7 @@ const logger = winston.createLogger({
     ]
 });
 
-const uri = process.env.MONGODB_URI; MONGODB_URI=mongodb+srv://bookingnadarecords:LTltqZFVhxeCte3b@kazemcluster1-shard.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
-PORT=3001;
-
+const uri = process.env.MONGODB_URI;  
 
 const client = new MongoClient(uri, {
     serverApi: {
